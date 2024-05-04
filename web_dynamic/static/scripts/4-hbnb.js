@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $.get(url, function (data, textStatus) {
         if (textStatus === 'success' && data.status === 'OK') {
             $('div#api_status').addClass('available');
+            $('div#api_status').css('background-color', '#ff545f');
         } else {
             $('div#api_status').removeClass('available');
         }

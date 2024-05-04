@@ -25,7 +25,9 @@ const url = 'http://0.0.0.0:5001/api/v1/status/';
 document.addEventListener('DOMContentLoaded', function () {
     $.get(url, function (data, textStatus) {
         if (textStatus === 'success' && data.status === 'OK') {
+            console.log("OK");
             $('div#api_status').addClass('available');
+            $('div#api_status').css('background-color', '#ff545f');
         } else {
             $('div#api_status').removeClass('available');
         }
