@@ -4,15 +4,11 @@ $(document).ready(function () {
 	$("input[type=checkbox]").change(function () {
 		let amenity_id = $(this).data("id");
 		let amenity_name = $(this).data("name") || i++;
-		console.log($(this).data("name"));
 		if (this.checked) {
-			console.log("Check");
 			amenities[amenity_id] = amenity_name;
 		} else {
-			console.log("Uncheck");
 			delete amenities[amenity_id];
 		}
-		console.log(amenities);
 		update_amenities();
 	});
 	function update_amenities() {
@@ -33,45 +29,32 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 });
 
-const _url = "http://0.0.0.0:5001/api/v1/status/";
-document.addEventListener("DOMContentLoaded", function () {
-	$.get(url, function (data, textStatus) {
-		if (textStatus === "success" && data.status === "OK") {
-			console.log("Yay");
-		} else {
-			console.log("Neh!");
-		}
-	});
-});
-
-// Make a POST request to the API
-fetch('http://0.0.0.0:5001/api/v1/places_search/', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({})
-})
-.then(response => response.json())
-.then(data => {
-  // Loop through the result and create article tags for each place
-  data.forEach(place => {
-    const article = document.createElement('article');
-    article.innerHTML = `
-      <div class="title_box">
-        <h2>${place.name}</h2>
-        <div class="price_by_night">$${place.price_by_night}</div>
-      </div>
-      <div class="information">
-        <div class="max_guest">${place.max_guest} Guests</div>
-        <div class="number_rooms">${place.number_rooms} Bedrooms</div>
-        <div class="number_bathrooms">${place.number_bathrooms} Bathroom</div>
-      </div>
-      <div class="description">
-        ${place.description.replace(/<[^>]*>?/gm, '')}
-      </div>
-    `;
-    document.querySelector('.places').appendChild(article);
-  });
-})
-.catch(error => console.error('Error:', error));
+const xhr = new XMLHttpRequest();
+xhr.open("POST", "http://0.0.0.0:5001/api/v1/places_search/");
+xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+const body = JSON.stringify({});
+xhr.onload = () => {
+	if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+		JSON.parse(xhr.responseText).forEach((place) => {
+			const article = document.createElement("article");
+			let art = ``;
+			art = `<div class="title_box">
+			        <h2>${place.name || "Hotel"}</h2>
+			        <div class="price_by_night">$${place.price_by_night || 0.00}</div>
+			      </div>
+			      <div class="information">
+			        <div class="max_guest">${place.max_guest || 0} Guests</div>
+			        <div class="number_rooms">${place.number_rooms || 0} Bedrooms</div>
+			        <div class="number_bathrooms">${place.number_bathrooms || 0} Bathroom</div>
+			      </div>
+			      <div class="description">
+			        ${place.description || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsam, aperiam."}
+			      </div>`;
+			article.innerHTML = art;
+			document.querySelector("section.places").appendChild(article);
+		});
+	} else {
+		console.log(`Error: ${xhr.status}`);
+	}
+};
+xhr.send(body);
