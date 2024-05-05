@@ -33,77 +33,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Task 4 wahala
+const request = require('request');
 
-function fetch_places() {
-  const url = 'http://0.0.0.0:5001/api/v1/places_search';
-  const data = {};
+// Function to send POST request and create article tags
+function fetchPlaces() {
   const options = {
+    url: 'http://0.0.0.0:5001/api/v1/places_search/',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify({})
   };
-  fetch(url, options)
-    .then(response => {
-      if (response.ok) {
-        // Response of places here
-        console.log(response.json());
-      } else {
-        throw new Error('Network response was not ok.');
-      }
-    })
-    .then(jsonData => {
-      console.log(jsonData);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+
+  request(options, (error, response, body) => {
+    if (error || response.statusCode !== 200) {
+      console.error('Failed to fetch places:', error || body);
+      return;
+    }
+
+    try {
+      const places = JSON.parse(body);
+      const placesSection = document.querySelector('section.places');
+      places.forEach(place => {
+        const article = document.createElement('article');
+        article.innerHTML = `
+          <div class="title_box">
+            <h2>${place.name}</h2>
+            <div class="price_by_night">$${place.price_by_night}</div>
+          </div>
+          <div class="information">
+            <div class="max_guest">${place.max_guest} Guest${place.max_guest !== 1 ? 's' : ''}</div>
+            <div class="number_rooms">${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>
+            <div class="number_bathrooms">${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>
+          </div>
+          <div class="description">
+            ${place.description.replace(/<[^>]*>?/gm, '')}
+          </div>
+        `;
+        placesSection.appendChild(article);
+      });
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError.message);
+    }
+  });
 }
-fetch_places();
 
-// const request = require('request');
-// function fetchPlaces() {
-//   const options = {
-//     url: 'http://0.0.0.0:5001/api/v1/places_search/',
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({})
-//   };
-
-//   request(options, (error, response, body) => {
-//     if (error || response.statusCode !== 200) {
-//       console.error('Failed to fetch places:', error || body);
-//       return;
-//     }
-
-//     try {
-//       const places = JSON.parse(body);
-//       const placesSection = document.querySelector('section.places');
-//       places.forEach(place => {
-//         const article = document.createElement('article');
-//         article.innerHTML = `
-//           <div class="title_box">
-//             <h2>${place.name}</h2>
-//             <div class="price_by_night">$${place.price_by_night}</div>
-//           </div>
-//           <div class="information">
-//             <div class="max_guest">${place.max_guest} Guest${place.max_guest !== 1 ? 's' : ''}</div>
-//             <div class="number_rooms">${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>
-//             <div class="number_bathrooms">${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>
-//           </div>
-//           <div class="description">
-//             ${place.description.replace(/<[^>]*>?/gm, '')}
-//           </div>
-//         `;
-//         placesSection.appendChild(article);
-//       });
-//     } catch (parseError) {
-//       console.error('Error parsing JSON:', parseError.message);
-//     }
-//   });
-// }
-// fetchPlaces();
+// Call the function to fetch and display places
+fetchPlaces();
