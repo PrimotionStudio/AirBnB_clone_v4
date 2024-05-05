@@ -164,6 +164,7 @@ $(document).ready(() => {
 $.get('http://0.0.0.0:5001/api/v1/status/', (data, textStatus) => {
   if (textStatus === 'success') {
     $('div#api_status').addClass('available');
+    $('div#api_status').css('background-color', '#ff545f');
   } else {
     $('div#api_status').removeClass('available');
   }
