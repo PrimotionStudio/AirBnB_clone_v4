@@ -34,7 +34,11 @@ def hbnb():
 
     places = storage.all(Place).values()
     places = sorted(places, key=lambda k: k.name)
-
+    # print("State:", [i for i in st_ct])
+    # print("State:", [x for x in [i for i in st_ct]])
+    print("State:", st_ct[0][0])
+    # print("Amenities:", [i for i in amenities])
+    # print("Place:", [i for i in places])
     return render_template('4-hbnb.html',
                            states=st_ct,
                            amenities=amenities,
