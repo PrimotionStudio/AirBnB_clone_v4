@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 const xhr = new XMLHttpRequest();
 xhr.open("POST", "http://0.0.0.0:5001/api/v1/places_search/");
 xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-const body = JSON.stringify({});
+const body = JSON.stringify({amenities: Object.keys(amenities)});
 xhr.onload = () => {
 	if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
 		JSON.parse(xhr.responseText).forEach((place) => {
